@@ -24,7 +24,7 @@ define rbenv::install ( $user ) {
     path    => ["/usr/bin", "/usr/sbin"],
     timeout => 100,
     require => Package['git-core'],
-  }
+  }->
 
   # STEP 2
   exec { "rbenv::install::${user}::add_path_to_bashrc":
@@ -35,7 +35,7 @@ define rbenv::install ( $user ) {
     onlyif  => "[ -f ${home_dir}/.bashrc ]",
     unless  => "grep ${install_dir}/bin ${home_dir}/.bashrc 2>/dev/null",
     path    => ["/bin", "/usr/bin", "/usr/sbin"],
-  }
+  }->
 
   # STEP 3
   exec { "rbenv::install::${user}::add_init_to_bashrc":
@@ -47,7 +47,7 @@ define rbenv::install ( $user ) {
     unless  => "grep 'rbenv init -' ${home_dir}/.bashrc 2>/dev/null",
     path    => ["/bin", "/usr/bin", "/usr/sbin"],
     require => Exec["rbenv::install::${user}::add_path_to_bashrc"],
-  }
+  }->
 
   file { "rbenv::install::${user}::make_plugins_dir":
     ensure  => directory,
@@ -55,7 +55,7 @@ define rbenv::install ( $user ) {
     owner   => $user,
     group   => $user,
     require => Exec["rbenv::install::${user}::checkout"],
-  }
+  }->
 
   # STEP 4
   # Install ruby-build under rbenv plugins directory
