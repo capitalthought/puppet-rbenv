@@ -68,6 +68,13 @@ define rbenv::install ( $user ) {
     path    => ["/usr/bin", "/usr/sbin"],
     timeout => 100,
     require => File["rbenv::install::${user}::make_plugins_dir"],
+  }->
+  file { "rbenv::install::${user}::make_versions_dir": 
+    ensure => directory,
+    path    => "${root_dir}/${install_dir}/versions",
+    owner   => $user,
+    group   => $user,
+    require => Exec["rbenv::install::${user}::checkout"],    
   }
 
   # TODO: Support old way of non-plugin installation for ruby-build
